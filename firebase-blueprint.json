@@ -1,0 +1,111 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Public and private information about a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "pseudonym": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "bio": { "type": "string" },
+        "isVerifiedNurse": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "followingCount": { "type": "integer" },
+        "followersCount": { "type": "integer" },
+        "karma": { "type": "integer" },
+        "savedPosts": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["userId", "pseudonym", "createdAt"]
+    },
+    "Community": {
+      "title": "Nursing Community",
+      "description": "A subreddit-style community for nurses.",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "memberCount": { "type": "integer" },
+        "iconUrl": { "type": "string" },
+        "bannerUrl": { "type": "string" }
+      },
+      "required": ["slug", "name", "creatorId", "createdAt"]
+    },
+    "Post": {
+      "title": "Community Post",
+      "description": "A post within a community or on a user's profile.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string" },
+        "authorPseudonym": { "type": "string" },
+        "communityId": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "image", "link"] },
+        "upvotes": { "type": "integer" },
+        "downvotes": { "type": "integer" },
+        "score": { "type": "integer" },
+        "commentCount": { "type": "integer" },
+        "isAnonymous": { "type": "boolean" },
+        "medicalFlag": { "type": "boolean" },
+        "hashtags": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["authorId", "title", "content", "createdAt"]
+    },
+    "Comment": {
+      "title": "Post Comment",
+      "description": "A comment on a post, supporting nesting.",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string" },
+        "parentId": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorPseudonym": { "type": "string" },
+        "content": { "type": "string" },
+        "upvotes": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "isAnonymous": { "type": "boolean" }
+      },
+      "required": ["postId", "authorId", "content", "createdAt"]
+    },
+    "Vote": {
+      "title": "Vote",
+      "description": "An upvote or downvote on a post or comment.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "targetId": { "type": "string" },
+        "type": { "type": "integer", "enum": [-1, 1] }
+      },
+      "required": ["userId", "targetId", "type"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/communities/{communityId}": {
+      "schema": "Community",
+      "description": "Communities"
+    },
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Global feed of posts"
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "Comments nested under posts"
+    },
+    "/votes/{voteId}": {
+      "schema": "Vote",
+      "description": "User votes to prevent duplicates"
+    }
+  }
+}
